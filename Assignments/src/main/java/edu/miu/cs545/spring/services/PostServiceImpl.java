@@ -1,6 +1,7 @@
 package edu.miu.cs545.spring.services;
 
 import edu.miu.cs545.spring.models.Post;
+import edu.miu.cs545.spring.models.PostV2;
 import edu.miu.cs545.spring.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post getById(Long id) {
         return postRepository.getById(id);
+    }
+
+    @Override
+    public Collection<PostV2> getByAuthor(String author) {
+        return postRepository.getByAuthor(author);
+    }
+
+    @Override
+    public Post add(Post post) {
+        return postRepository.add(post);
     }
 
     @Override
