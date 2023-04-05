@@ -1,12 +1,17 @@
 package edu.miu.cs545.spring.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 
 @Data
-@Setter @Getter
-@NoArgsConstructor @AllArgsConstructor
+@Entity
 public class Post {
-    long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
     String title;
     String content;
     String author;

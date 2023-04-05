@@ -6,7 +6,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 public class PostDto {
-    long id;
+    Long id;
     String title;
     String content;
     String author;

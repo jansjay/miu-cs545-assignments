@@ -1,0 +1,20 @@
+# application.properties is given priority
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 1
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL81Dialect
+        format_sql: true
+  sql:
+    init:
+      mode: always
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
