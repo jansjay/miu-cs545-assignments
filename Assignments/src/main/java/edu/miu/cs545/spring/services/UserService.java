@@ -12,4 +12,6 @@ public interface UserService {
     void delete(Long id);
     Collection<User> getAll();
     Collection<Post> getUserPostsAll(Long id);
+    Collection<User> getUsersWithNoOfPostsGreaterThan(Long count);
+
 }

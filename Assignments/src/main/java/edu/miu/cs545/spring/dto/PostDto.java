@@ -9,5 +9,4 @@ public class PostDto {
     Long id;
     String title;
     String content;
-    String author;
 }

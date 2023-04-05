@@ -44,4 +44,9 @@ public class UserServiceImpl implements UserService {
     public Collection<Post> getUserPostsAll(Long id) {
         return userRepository.getPosts(id);
     }
+
+    @Override
+    public Collection<User> getUsersWithNoOfPostsGreaterThan(Long count) {
+        return userRepository.getUsersWithNoOfPostsGreaterThan(count);
+    }
 }

@@ -31,6 +31,11 @@ public class UserController {
     public ResponseEntity<Collection<PostDto>> getUserPostsAll(@PathVariable("id") Long userid){
         return ResponseEntity.ok(userService.getUserPostsAll(userid).stream().map(x-> modelMapper.map(x, PostDto.class)).collect(Collectors.toList()));
     }
+
+    @GetMapping("/noOfPostsGreaterThan/{count}")
+    public ResponseEntity<Collection<UserDto>> getUsersWithNoOfPostsGreaterThan(@PathVariable("count") Long count){
+        return ResponseEntity.ok(userService.getUsersWithNoOfPostsGreaterThan(count).stream().map(x-> modelMapper.map(x, UserDto.class)).collect(Collectors.toList()));
+    }
     @PostMapping
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto user){
         // Post should return created with location
