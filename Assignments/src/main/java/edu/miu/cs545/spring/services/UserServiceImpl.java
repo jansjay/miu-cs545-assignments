@@ -50,8 +50,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<PostDto> getUserPostsAll(Long id) {
-        return postService.findPostsByUserId(id);
+    public Collection<PostDto> getUserPostsAll(Long id) { return postService.findPostsByUserId(id); }
+
+    @Override
+    public Collection<UserDto> getUsersWithPostsTitle(String title) {
+        Collection<UserDto> userDto = new ArrayList<>();
+        userRepository.findByPostsTitleIgnoreCase(title).forEach(x->userDto.add(getUserDto(x)));
+        return userDto;
     }
 
     @Override

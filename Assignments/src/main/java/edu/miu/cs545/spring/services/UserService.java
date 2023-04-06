@@ -13,4 +13,5 @@ public interface UserService {
     Collection<UserDto> getAll();
     Collection<UserDto> getUsersWithNoOfPostsGreaterThan(Long count);
     Collection<PostDto> getUserPostsAll(Long id);
+    Collection<UserDto> getUsersWithPostsTitle(String title);
 }

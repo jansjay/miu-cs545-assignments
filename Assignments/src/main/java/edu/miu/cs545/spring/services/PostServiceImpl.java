@@ -64,6 +64,19 @@ public class PostServiceImpl implements PostService {
         postRepository.findPostsByUserId(userId).forEach(x-> posts.add(getPostDto(x)));
         return posts;
     }
+    @Override
+    public Collection<PostDto> findPostsByUserIdPostId(Long userId, Long postId){
+        Collection<PostDto> posts = new ArrayList<>();
+        postRepository.findPostsByUserIdPostId(userId, postId).forEach(x-> posts.add(getPostDto(x)));
+        return posts;
+    }
+
+    @Override
+    public Collection<PostDto> getPostsWithTitle(String title) {
+        Collection<PostDto> postDto = new ArrayList<>();
+        postRepository.findByTitleIgnoreCase(title).forEach(x->postDto.add(getPostDto(x)));
+        return postDto;
+    }
 
     private PostDto getPostDto(Post post){
         PostDto dto = modelMapper.map(post, PostDto.class);
@@ -72,7 +85,6 @@ public class PostServiceImpl implements PostService {
         }
         return dto;
     }
-
     private Post saveUserAndGetPost(PostDto postDto){
         //Note: We have to do all these additional processing due to the
         //      assignment2 requirement of having unidirectional relationship

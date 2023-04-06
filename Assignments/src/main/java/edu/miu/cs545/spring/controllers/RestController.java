@@ -1,6 +1,8 @@
 package edu.miu.cs545.spring.controllers;
 
+import edu.miu.cs545.spring.dto.CommentDto;
 import edu.miu.cs545.spring.dto.PostDto;
+import edu.miu.cs545.spring.services.CommentService;
 import edu.miu.cs545.spring.services.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,23 @@ public class RestController {
     @Autowired
     PostService postService;
     @Autowired
+    CommentService commentService;
+    @Autowired
     ModelMapper modelMapper;
     @GetMapping
     public ResponseEntity<Collection<PostDto>> getAll(){
         return ResponseEntity.ok(postService.getAll().stream().map(x-> modelMapper.map(x, PostDto.class)).collect(Collectors.toList()));
     }
+    @PostMapping ("{id}/comments")
+    ResponseEntity<CommentDto> getComments(@PathVariable Long id, @RequestBody CommentDto commentDto){
+        return ResponseEntity.ok(commentService.addComment(id, commentDto));
+    }
+    @GetMapping("/findByTitle/{title}")
+    public ResponseEntity<Collection<PostDto>> getPostsWithTitle(@PathVariable("title") String title){
+        return ResponseEntity.ok(postService.getPostsWithTitle(title));
+    }
     @PostMapping
-    public ResponseEntity<PostDto> addPost(@RequestBody PostDto post){
+    public ResponseEntity<Void> addPost(@RequestBody PostDto post){
         // Post should return created with location
         // https://www.rfc-editor.org/rfc/rfc9110.html#name-post
         PostDto newPost = postService.add(post);
@@ -41,7 +53,7 @@ public class RestController {
         return ResponseEntity.ok(postService.getById(id));
     }
     @PutMapping()
-    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto post){
+    public ResponseEntity<Void> updatePost(@RequestBody PostDto post){
         // Put should return 200 with a redirect if newly created, else 200 or 204 only
         // https://www.rfc-editor.org/rfc/rfc9110.html#name-put
         Long prevId = post.getId();

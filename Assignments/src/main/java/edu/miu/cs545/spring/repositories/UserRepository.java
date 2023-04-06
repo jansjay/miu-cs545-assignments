@@ -10,4 +10,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
     @Query(value = "SELECT * FROM users u WHERE u.id IN (SELECT p.user_id FROM post p GROUP BY p.user_id HAVING count(*) > :count)", nativeQuery = true)
     //@Query(value = "SELECT u FROM User u WHERE COUNT(u.posts) > :count")
     Collection<User> getUsersWithNoOfPostsGreaterThan(Long count);
+    Collection<User> findByPostsTitleIgnoreCase(String title);
 }

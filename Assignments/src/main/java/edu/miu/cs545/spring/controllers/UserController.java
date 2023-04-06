@@ -1,7 +1,10 @@
 package edu.miu.cs545.spring.controllers;
 
+import edu.miu.cs545.spring.dto.CommentDto;
 import edu.miu.cs545.spring.dto.PostDto;
 import edu.miu.cs545.spring.dto.UserDto;
+import edu.miu.cs545.spring.services.CommentService;
+import edu.miu.cs545.spring.services.PostService;
 import edu.miu.cs545.spring.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,10 @@ import java.util.Objects;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    PostService postService;
+    @Autowired
+    CommentService commentService;
     @GetMapping
     public ResponseEntity<Collection<UserDto>> getAll(){
         return ResponseEntity.ok(userService.getAll());
@@ -27,12 +34,31 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserPostsAll(userid));
     }
 
+    @GetMapping("/{id}/posts/{postId}")
+    public ResponseEntity<Collection<PostDto>> getUserPostsAll(@PathVariable("id") Long userid, @PathVariable("postId") Long postId){
+        return ResponseEntity.ok(postService.findPostsByUserIdPostId(userid, postId));
+    }
+
+    @GetMapping("/{id}/posts/{postId}/comments")
+    public ResponseEntity<Collection<CommentDto>> getUserPostsCommentsAll(@PathVariable("id") Long userId, @PathVariable("postId") Long postId){
+        return ResponseEntity.ok(commentService.findComments(userId, postId));
+    }
+
+    @GetMapping("/{id}/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentDto> getUserPostsComment(@PathVariable("id") Long userId, @PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId){
+        return ResponseEntity.ok(commentService.findComment(userId, postId, commentId));
+    }
+
     @GetMapping("/noOfPostsGreaterThan/{count}")
     public ResponseEntity<Collection<UserDto>> getUsersWithNoOfPostsGreaterThan(@PathVariable("count") Long count){
         return ResponseEntity.ok(userService.getUsersWithNoOfPostsGreaterThan(count));
     }
+    @GetMapping("/findByPostTitle/{title}")
+    public ResponseEntity<Collection<UserDto>> getUsersWithPostTitle(@PathVariable("title") String title){
+        return ResponseEntity.ok(userService.getUsersWithPostsTitle(title));
+    }
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user){
+    public ResponseEntity<Void> addUser(@RequestBody UserDto user){
         // Post should return created with location
         // https://www.rfc-editor.org/rfc/rfc9110.html#name-post
         UserDto newUser = userService.add(user);

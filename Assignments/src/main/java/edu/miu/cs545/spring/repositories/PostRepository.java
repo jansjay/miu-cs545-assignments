@@ -12,4 +12,7 @@ public interface PostRepository extends CrudRepository<Post, Long> {
     Collection<Post> findPostsByUserId(@Param("id") Long id);
     @Query(value = "SELECT user_id FROM post WHERE id = :id", nativeQuery = true)
     Long getUserId(@Param("id") Long id);
+    @Query(value = "SELECT * FROM post p WHERE p.id = :postId AND p.user_id = :userId", nativeQuery = true)
+    Collection<Post> findPostsByUserIdPostId(@Param("userId") Long userId, @Param("postId") Long postId);
+    Collection<Post> findByTitleIgnoreCase(String title);
 }

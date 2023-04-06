@@ -12,4 +12,6 @@ public interface PostService {
     void delete(Long id);
     Collection<PostDto> getAll();
     Collection<PostDto> findPostsByUserId(Long userId);
+    Collection<PostDto> findPostsByUserIdPostId(Long userId, Long postId);
+    Collection<PostDto> getPostsWithTitle(String title);
 }
