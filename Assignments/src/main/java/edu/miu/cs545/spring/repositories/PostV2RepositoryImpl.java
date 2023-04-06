@@ -1,5 +1,6 @@
 package edu.miu.cs545.spring.repositories;
 
+import edu.miu.cs545.spring.dto.PostDto;
 import edu.miu.cs545.spring.models.PostV2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository
 public class PostV2RepositoryImpl implements PostV2Repository{
@@ -24,10 +24,10 @@ public class PostV2RepositoryImpl implements PostV2Repository{
     }
 
     @Override
-    public Collection<PostV2> getByAuthor(String author) {
+    public Collection<PostDto> getByAuthor(String author) {
         return posts.values().stream()
                 .filter(x-> x.getAuthor().equals(author))
                 .map(x-> modelMapper.map(x, PostV2.class))
-                .collect(Collectors.toList());
+                .toList().stream().map(x-> modelMapper.map(x, PostDto.class)).toList();
     }
 }

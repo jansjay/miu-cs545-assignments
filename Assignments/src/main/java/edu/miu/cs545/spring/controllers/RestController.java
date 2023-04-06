@@ -1,7 +1,6 @@
 package edu.miu.cs545.spring.controllers;
 
 import edu.miu.cs545.spring.dto.PostDto;
-import edu.miu.cs545.spring.models.Post;
 import edu.miu.cs545.spring.services.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class RestController {
     public ResponseEntity<PostDto> addPost(@RequestBody PostDto post){
         // Post should return created with location
         // https://www.rfc-editor.org/rfc/rfc9110.html#name-post
-        Post newPost = postService.add(modelMapper.map(post, Post.class));
+        PostDto newPost = postService.add(post);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -39,14 +38,14 @@ public class RestController {
     }
     @GetMapping("{id}")
     public ResponseEntity<PostDto> getPost(@PathVariable("id") Long id){
-        return ResponseEntity.ok(modelMapper.map(postService.getById(id), PostDto.class));
+        return ResponseEntity.ok(postService.getById(id));
     }
     @PutMapping()
     public ResponseEntity<PostDto> updatePost(@RequestBody PostDto post){
         // Put should return 200 with a redirect if newly created, else 200 or 204 only
         // https://www.rfc-editor.org/rfc/rfc9110.html#name-put
         Long prevId = post.getId();
-        Post updatedPost = postService.update(modelMapper.map(post, Post.class));
+        PostDto updatedPost = postService.update(post);
         if(!Objects.equals(prevId, updatedPost.getId())) {
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()

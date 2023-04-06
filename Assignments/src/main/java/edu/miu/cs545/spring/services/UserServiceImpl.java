@@ -1,8 +1,10 @@
 package edu.miu.cs545.spring.services;
 
-import edu.miu.cs545.spring.models.Post;
+import edu.miu.cs545.spring.dto.PostDto;
+import edu.miu.cs545.spring.dto.UserDto;
 import edu.miu.cs545.spring.models.User;
 import edu.miu.cs545.spring.repositories.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +15,26 @@ import java.util.Collection;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PostService postService;
+
     @Override
-    public User getById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public UserDto getById(Long id) {
+        return getUserDto(userRepository.findById(id).orElse(null));
+    }
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Override
+    public UserDto add(UserDto userDto) {
+        return getUserDto(userRepository.save(getUser(userDto)));
     }
 
     @Override
-    public User add(User user) {
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User update(User user) {
-        return userRepository.save(user);
+    public UserDto update(UserDto userDto) {
+        return getUserDto(userRepository.save(getUser(userDto)));
     }
 
     @Override
@@ -34,19 +43,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<User> getAll() {
-        Collection<User> users = new ArrayList<>();
-        userRepository.findAll().forEach(users::add);
-        return users;
+    public Collection<UserDto> getAll() {
+        Collection<UserDto> userDto = new ArrayList<>();
+        userRepository.findAll().forEach(x->userDto.add(getUserDto(x)));
+        return userDto;
     }
 
     @Override
-    public Collection<Post> getUserPostsAll(Long id) {
-        return userRepository.getPosts(id);
+    public Collection<PostDto> getUserPostsAll(Long id) {
+        return postService.findPostsByUserId(id);
     }
 
     @Override
-    public Collection<User> getUsersWithNoOfPostsGreaterThan(Long count) {
-        return userRepository.getUsersWithNoOfPostsGreaterThan(count);
+    public Collection<UserDto> getUsersWithNoOfPostsGreaterThan(Long count) {
+        Collection<UserDto> userDto = new ArrayList<>();
+        userRepository.getUsersWithNoOfPostsGreaterThan(count).forEach(x->userDto.add(getUserDto(x)));
+        return userDto;
+    }
+
+    private UserDto getUserDto(User user){
+        return modelMapper.map(user, UserDto.class);
+    }
+
+    private User getUser(UserDto userDto){
+        return modelMapper.map(userDto, User.class);
     }
 }

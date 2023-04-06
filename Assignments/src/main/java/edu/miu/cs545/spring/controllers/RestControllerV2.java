@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/posts", headers = "API-VERSION=2")
@@ -22,6 +21,6 @@ public class RestControllerV2 {
     ModelMapper modelMapper;
     @GetMapping
     public ResponseEntity<Collection<PostDto>> getByAuthor(@RequestParam("author") String author){
-        return ResponseEntity.ok(postService.getByAuthor(author).stream().map(x-> modelMapper.map(x, PostDto.class)).collect(Collectors.toList()));
+        return ResponseEntity.ok(postService.getByAuthor(author));
     }
 }

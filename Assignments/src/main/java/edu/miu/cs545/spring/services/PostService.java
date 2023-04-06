@@ -1,15 +1,15 @@
 package edu.miu.cs545.spring.services;
 
-import edu.miu.cs545.spring.models.Post;
-import edu.miu.cs545.spring.models.PostV2;
+import edu.miu.cs545.spring.dto.PostDto;
 
 import java.util.Collection;
 
 public interface PostService {
-    Post getById(Long id);
-    Collection<PostV2> getByAuthor(String author);
-    Post add(Post post);
-    Post update(Post post);
+    PostDto getById(Long id);
+    Collection<PostDto> getByAuthor(String author);
+    PostDto add(PostDto post);
+    PostDto update(PostDto post);
     void delete(Long id);
-    Collection<Post> getAll();
+    Collection<PostDto> getAll();
+    Collection<PostDto> findPostsByUserId(Long userId);
 }
