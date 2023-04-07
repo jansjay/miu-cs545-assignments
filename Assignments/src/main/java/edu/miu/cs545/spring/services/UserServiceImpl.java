@@ -1,5 +1,6 @@
 package edu.miu.cs545.spring.services;
 
+import edu.miu.cs545.spring.aspect.ExecutionTime;
 import edu.miu.cs545.spring.dto.PostDto;
 import edu.miu.cs545.spring.dto.UserDto;
 import edu.miu.cs545.spring.models.User;
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
     private PostService postService;
 
     @Override
+    @ExecutionTime
     public UserDto getById(Long id) {
         return getUserDto(userRepository.findById(id).orElse(null));
     }
