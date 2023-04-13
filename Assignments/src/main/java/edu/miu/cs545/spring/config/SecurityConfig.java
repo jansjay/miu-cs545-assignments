@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
                 .csrf().disable().cors().and()
                 .authorizeHttpRequests()
-                .requestMatchers("/authenticate/**").permitAll()
+                .requestMatchers("/authenticate", "/authenticate/refresh").permitAll()
                 .requestMatchers("/users", "/posts").hasAnyAuthority(roles)
                 .anyRequest()
                 .authenticated()

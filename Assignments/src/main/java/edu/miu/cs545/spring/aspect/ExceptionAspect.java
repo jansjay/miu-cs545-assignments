@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -25,8 +26,13 @@ public class ExceptionAspect {
     @AfterThrowing(pointcut="logException()", throwing = "ex")
     public void catchAndLogException(Throwable ex) {
         StackTraceElement lastTrace = ex.getStackTrace()[0];
+        String username = "";
+        if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null &&
+           SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDetails) {
+            username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        }
         storeExceptionEntry(lastTrace.getClassName()+"."+lastTrace.getMethodName(),
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(),
+                username,
                 ex.getClass().getCanonicalName());
     }
 

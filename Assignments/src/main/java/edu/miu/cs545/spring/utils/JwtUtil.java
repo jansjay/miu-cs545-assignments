@@ -1,5 +1,6 @@
 package edu.miu.cs545.spring.utils;
 
+import edu.miu.cs545.spring.services.AccessTokenService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -21,6 +22,8 @@ public class JwtUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtil.class);
     @Autowired
     UserDetailsService userDetailsService;
+    @Autowired
+    AccessTokenService accessTokenService;
     private final String secret = "top-secret";
     private final long expiration = 5 * 60 * 60 * 60;
     //     private final long expiration = 5;
@@ -52,6 +55,9 @@ public class JwtUtil {
     }
 
     public UsernamePasswordAuthenticationToken getAuthentication(String token, HttpServletRequest request){
+        if(!accessTokenService.accessTokenExists(token)) {
+            throw new JwtException("Access Token is not valid");
+        }
         var userDetails = userDetailsService.loadUserByUsername(getUsernameFromToken(token));
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
@@ -127,6 +133,22 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
+    public Date getExpirationDate(String token){
+        Date result = null;
+        try {
+            result = Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getExpiration();
+        } catch (ExpiredJwtException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
 
     public String getUsernameFromToken(String token) {
         String result = null;
