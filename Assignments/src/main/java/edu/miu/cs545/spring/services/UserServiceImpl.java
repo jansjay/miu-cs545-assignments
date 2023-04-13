@@ -7,6 +7,8 @@ import edu.miu.cs545.spring.models.User;
 import edu.miu.cs545.spring.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,5 +76,10 @@ public class UserServiceImpl implements UserService {
 
     private User getUser(UserDto userDto){
         return modelMapper.map(userDto, User.class);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByName(username).orElse(null);
     }
 }

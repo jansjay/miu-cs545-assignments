@@ -1,4 +1,4 @@
-INSERT INTO users (name) VALUES ('Joe Dones');
+INSERT INTO users (name) VALUES ('admin');
 
 INSERT INTO post (title, content, user_id) VALUES ('Things Fall Apart', 'https://en.wikipedia.org/wiki/Things_Fall_Apart', 1);
 INSERT INTO post (title, content, user_id) VALUES ('Fairy tales', 'https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection', 1);

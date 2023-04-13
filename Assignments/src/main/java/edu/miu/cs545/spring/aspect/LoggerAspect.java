@@ -19,7 +19,7 @@ import java.time.LocalTime;
 public class LoggerAspect {
     @Autowired
     private LoggerRepository loggerRepository;
-    @Pointcut("execution(* edu.miu.cs545.spring..*.*(..)) && " +
+    @Pointcut("execution(* edu.miu.cs545.spring.controllers.*.*(..)) && " +
             "!execution(* edu.miu.cs545.spring.repositories.LoggerRepository.*(..)) &&" +
             "!execution(* edu.miu.cs545.spring.aspect.LoggerAspect.*(..))")
     private void log() {}
