@@ -7,5 +7,6 @@ import java.util.Collection;
 public interface CommentService {
     CommentDto addComment(Long postId, CommentDto commentDto);
     Collection<CommentDto> findComments(Long userId, Long postId);
+    Collection<CommentDto> findByPostId(Long postId);
     CommentDto findComment(Long userId, Long postId, Long commentId);
 }

@@ -12,4 +12,6 @@ public class PostDto {
     //Note: We have to do additional processing due to the
     //      assignment requirement of having unidirectional relationship
     Long userId;
+
+    UserDto user;
 }

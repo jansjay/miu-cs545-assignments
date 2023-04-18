@@ -28,8 +28,12 @@ public class RestController {
     public ResponseEntity<Collection<PostDto>> getAll(){
         return ResponseEntity.ok(postService.getAll().stream().map(x-> modelMapper.map(x, PostDto.class)).collect(Collectors.toList()));
     }
+    @GetMapping ("{id}/comments")
+    ResponseEntity<Collection<CommentDto>> getComments(@PathVariable Long id){
+        return ResponseEntity.ok(commentService.findByPostId(id));
+    }
     @PostMapping ("{id}/comments")
-    ResponseEntity<CommentDto> getComments(@PathVariable Long id, @RequestBody CommentDto commentDto){
+    ResponseEntity<CommentDto> postComments(@PathVariable Long id, @RequestBody CommentDto commentDto){
         return ResponseEntity.ok(commentService.addComment(id, commentDto));
     }
     @GetMapping("/findByTitle/{title}")

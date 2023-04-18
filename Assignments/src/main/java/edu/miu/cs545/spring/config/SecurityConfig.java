@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -24,43 +26,33 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     String [] roles = {"CLIENT" , "ADMIN"};
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf().disable().cors().and()
                 .authorizeHttpRequests()
-                .requestMatchers("/authenticate", "/authenticate/refresh").permitAll()
+                //.requestMatchers("/authenticate", "/authenticate/refresh").permitAll()
+                // Enabled all traffic for testing
+                .requestMatchers("/**").permitAll()
                 .requestMatchers("/users", "/posts").hasAnyAuthority(roles)
                 .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        //http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     // Not necessary for Rest
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**");
-    }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowedMethods("GET", "PUT", "POST","DELETE");
+            }
+        };
     }
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-
-        return authProvider;
-    }
 }

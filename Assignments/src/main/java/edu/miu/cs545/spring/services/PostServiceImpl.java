@@ -1,6 +1,7 @@
 package edu.miu.cs545.spring.services;
 
 import edu.miu.cs545.spring.dto.PostDto;
+import edu.miu.cs545.spring.dto.UserDto;
 import edu.miu.cs545.spring.models.Post;
 import edu.miu.cs545.spring.models.User;
 import edu.miu.cs545.spring.repositories.PostRepository;
@@ -9,6 +10,8 @@ import edu.miu.cs545.spring.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -81,7 +84,9 @@ public class PostServiceImpl implements PostService {
     private PostDto getPostDto(Post post){
         PostDto dto = modelMapper.map(post, PostDto.class);
         if(post != null){
+            //Due to non bi directional assignment requirement
             dto.setUserId(postRepository.getUserId(post.getId()));
+            dto.setUser(modelMapper.map(userRepository.findById(dto.getUserId()).orElse(null), UserDto.class));
         }
         return dto;
     }
@@ -90,9 +95,23 @@ public class PostServiceImpl implements PostService {
         //      assignment2 requirement of having unidirectional relationship
         Post post = modelMapper.map(postDto, Post.class);
         if(post != null){
-            User user = userRepository.findById(postDto.getUserId()).orElse(null);
+            User user = null;
+            if(postDto.getUserId() != null) {
+                user = userRepository.findById(postDto.getUserId()).orElse(null);
+            }
             if(user == null){
-                throw new EntityNotFoundException("User not found");
+                if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null &&
+                        SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDetails) {
+                    String username = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+                    user = userRepository.findByName(username).orElse(null);
+                }
+                if(user == null){
+                    //TODO, happens when running in dev mode
+                    user = userRepository.findById(1L).orElse(null);
+                }
+                if(user == null) {
+                    throw new EntityNotFoundException("User not found");
+                }
             }
             if(user.getPosts().stream().noneMatch(x-> x.getId().equals(post.getId()))){
                 user.getPosts().add(post);

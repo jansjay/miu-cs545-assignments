@@ -6,7 +6,7 @@ function Post(props) {
           {props.post.id}. {props.post.title}
         </span>
         <br />
-        <span>{props.post.author}</span>
+        <span>{props.post.user.name}</span>
       </li>
     </div>
   );

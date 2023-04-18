@@ -43,6 +43,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Collection<CommentDto> findByPostId(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            throw new EntityNotFoundException("Post not found.");
+        }
+        return post.getComments().stream().map(x->modelMapper.map(x, CommentDto.class)).toList();
+    }
+
+    @Override
     public CommentDto findComment(Long userId, Long postId, Long commentId) {
         Collection<Post> postCollection = postRepository.findPostsByUserIdPostId(userId, postId);
         if (postCollection == null || postCollection.size() < 1) {
