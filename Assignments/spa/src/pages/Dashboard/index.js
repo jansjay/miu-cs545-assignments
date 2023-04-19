@@ -5,7 +5,7 @@ function Dashboard() {
     <>
       <div>
         <Posts />
-      </div>      
+      </div>
     </>
   );
 }

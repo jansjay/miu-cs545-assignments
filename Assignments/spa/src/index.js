@@ -6,8 +6,9 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  //Note: Having StrictMode will send two network calls in dev mode
   <React.StrictMode>
-    <App />
+      <App />
   </React.StrictMode>
 );
 

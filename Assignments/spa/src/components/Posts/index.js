@@ -4,12 +4,13 @@ import PostDetails, {
   PostDetailsModification,
 } from "../../components/PostDetails";
 import Post from "../Post";
+import { GlobalContext } from "../../context/GlobalContext";
 
 function Posts() {
   const [posts, setPosts] = useState([]);
-  const [selectedPost, setSelectedPost] = useState({});
   const [refreshFlag, setRefreshFlag] = useState(false);
-  const [formVisible, setFormVisible] = useState(false);
+  const [formVisible, setFormVisible] = useState(false);  
+  const [globalContext, setGlobalContext] = useState({});
   useEffect(() => {
     getPosts()
       .then((data) => setPosts(data))
@@ -18,25 +19,28 @@ function Posts() {
   const onDelete = async (id) => {
     await deletePost(id);
     setRefreshFlag(!refreshFlag);
-    setSelectedPost({});
+    setGlobalContext({...globalContext, selectedPost: {}});
   };
   const onEdit = async (id) => {
     setFormVisible(true);
   };
   const onNew = async (id) => {
-    setSelectedPost({});
+    setGlobalContext({...globalContext, selectedPost: {}});
     setFormVisible(true);
   };
   const onSelected = (id) => {
-    setSelectedPost(posts.find((x) => x.id === id));    
+    let c = {...globalContext, selectedPost: posts.find((x) => x.id === id)};
+    setGlobalContext(c);    
   };
   const postDetailsModified = () => {
     setRefreshFlag(!refreshFlag);
-    setSelectedPost({});
+    setGlobalContext({...globalContext, selectedPost: {}});
     setFormVisible(false);
   };
   return (
     <>
+    <GlobalContext.Provider value={globalContext}>    
+    
       <div className="w3-col l4">
         <div className="w3-card w3-margin"></div>
       </div>
@@ -54,7 +58,7 @@ function Posts() {
           ))}
         </ul>
       </div>
-      <PostDetails id={selectedPost.id} onDelete={onDelete} onEdit={onEdit} />
+      <PostDetails onDelete={onDelete} onEdit={onEdit} />
       <div className="w3-col l4">
         <div className="w3-card w3-margin">
           <p>
@@ -64,12 +68,12 @@ function Posts() {
       </div>
       {formVisible ? (
         <PostDetailsModification
-          id={selectedPost.id}
           postDetailsModified={postDetailsModified}
         />
       ) : (
         ""
       )}
+      </GlobalContext.Provider>
     </>
   );
 }

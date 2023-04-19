@@ -1,37 +1,28 @@
-import { useEffect, useState } from "react";
-import { addNewPost, getPost, updatePost } from "../../api/Posts";
+import { useContext, useRef, } from "react";
+import { addNewPost, updatePost } from "../../api/Posts";
 import Comments from "../Comments";
+import { GlobalContext } from "../../context/GlobalContext";
 
 function PostDetails(props) {
-  const [post, setPost] = useState({});
-  useEffect(() => {
-    if (props.id) {
-      getPost(props.id)
-        .then((data) => setPost(data))
-        .catch((error) => console.log(error));
-    } else {
-      setPost({});
-    }
-  }, [props.id]);
-
-  if (post && post.id) {
+  const globalContext = useContext(GlobalContext);  
+  if (globalContext.selectedPost && globalContext.selectedPost.id) {
     return (
       <div className="w3-card-4 w3-margin w3-white">
         <div className="w3-container">
-          <h3>{post.title}</h3>
-          <h5>{post.user.name}</h5>
+          <h3>{globalContext.selectedPost.title}</h3>
+          <h5>{globalContext.selectedPost.user.name}</h5>
           <div className="w3-container">
-            <p>{post.content}</p>
+            <p>{globalContext.selectedPost.content}</p>
           </div>
           <div className="w3-row">
             <div className="w3-col m8 s12">
               <p>
-                <button onClick={() => props.onEdit(post.id)}>edit</button>
-                <button onClick={() => props.onDelete(post.id)}>delete</button>
+                <button onClick={() => props.onEdit(globalContext.selectedPost.id)}>edit</button>
+                <button onClick={() => props.onDelete(globalContext.selectedPost.id)}>delete</button>
               </p>
             </div>
           </div>
-          <Comments id={post.id} />
+          <Comments />
         </div>
       </div>
     );
@@ -40,47 +31,37 @@ function PostDetails(props) {
 }
 
 export function PostDetailsModification(props) {
-  const [post, setPost] = useState({});
-  useEffect(() => {
-    if (props.id) {
-      getPost(props.id)
-        .then((data) => setPost(data))
-        .catch((error) => console.log(error));
+  const globalContext = useContext(GlobalContext);  
+  const htmlFormElements = useRef();
+  
+  const okClicked = async (evt) => {
+    evt.preventDefault();
+    let post = globalContext.selectedPost;
+    post.title = htmlFormElements.current['title'].value;
+    post.content = htmlFormElements.current['content'].value;
+    if (globalContext.selectedPost.id) {
+      await updatePost(globalContext.selectedPost);
     } else {
-      setPost({});
-    }
-  }, [props.id]);
-  const updateTitle = (evt) => {
-    setPost({ ...post, title: evt.target.value });
-  };
-  const updateContent = (evt) => {
-    setPost({ ...post, content: evt.target.value });
-  };
-  const okClicked = async () => {
-    if (post.id) {
-      await updatePost(post);
-    } else {
-      await addNewPost(post);
+      await addNewPost(globalContext.selectedPost);
     }
     props.postDetailsModified();
   };
   return (
     <div className="w3-card-4 w3-margin w3-white">
       <div className="w3-container">
-        {" "}
-        <label for="title">Title</label><br/>
+        <form ref={htmlFormElements}>
+        <label htmlFor="title">Title</label><br/>
         <input
-          value={post.title}
-          onChange={(evt) => updateTitle(evt)}
+          defaultValue={globalContext.selectedPost ? globalContext.selectedPost.title : ""}
           name="title"
         /><br/>
-        <label for="content">Content</label><br/>
+        <label htmlFor="content">Content</label><br/>
         <textarea
-          value={post.content}
-          onChange={(evt) => updateContent(evt)}
+          defaultValue={globalContext.selectedPost ? globalContext.selectedPost.content : ""}
           name="content"
         /><br/>
         <button onClick={okClicked}>Ok</button>
+        </form>
       </div>
     </div>
   );
