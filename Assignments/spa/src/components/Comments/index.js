@@ -1,17 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { getComments } from "../../api/Posts";
 import Comment from "../Comment";
-import { GlobalContext } from "../../context/GlobalContext";
 
 function Comments(props) {
   const [comments, setComments] = useState([]);
-  const globalContext = useContext(GlobalContext);
   
   useEffect(() => {
-    getComments(globalContext.selectedPost.id)
+    getComments(props.id)
       .then((data) => setComments(data))
       .catch((error) => console.log(error));
-  }, [globalContext.selectedPost.id]);
+  }, [props.id]);
 
   return (
     <div>

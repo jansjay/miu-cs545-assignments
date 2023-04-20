@@ -1,10 +1,10 @@
-import Posts from "../../components/Posts";
+import { PageRoutes } from "../../components/PageRoutes";
 
 function Dashboard() {
   return (
     <>
       <div>
-        <Posts />
+        <PageRoutes />
       </div>
     </>
   );
